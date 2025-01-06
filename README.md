@@ -21,3 +21,7 @@ Users should be able to:
 - Live Site on: [Netlify](https://your-live-site-url.com)
 
 ## What I learned
+
+- `e.target.dataset.choice`
+- `classList.contains`
+- Once JS adds a piece of DOM, that peace can't be removed by a simple `if` statement! You should explicitely remove it.

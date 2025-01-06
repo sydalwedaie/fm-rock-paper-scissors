@@ -1,65 +1,115 @@
-// define the choices
-const choices = ["rock", "paper", "scissors"];
-const winningCombos = ["rock, scissors", "paper, rock", "scissors, paper"];
+// Get Static UI Elements
+const playerScoreEl = document.querySelector(".player-score");
+const computerScoreEl = document.querySelector(".computer-score");
+const playAreaEl = document.querySelector(".play-area");
 
+// Desplay UI Functions
+function displayChoices(choices) {
+  playAreaEl.innerHTML = "";
+  const choiceHtml = choices
+    .map(
+      (choice) =>
+        `<button class="btn-choice btn-${choice}" data-choice="${choice}">${choice}</button>`
+    )
+    .join("");
+  playAreaEl.innerHTML =
+    "<div class='choice-container'>" + choiceHtml + "</div>";
+}
+
+function updateScoreboard(scores) {
+  playerScoreEl.querySelector("span").textContent = scores.player;
+  computerScoreEl.querySelector("span").textContent = scores.computer;
+}
+
+// Game Logic
 function getComputerChoice(choices) {
-  // randomly pick an index
   const randomIndex = Math.floor(Math.random() * choices.length);
-
   return choices[randomIndex];
 }
 
-function getHumanChoice(choices) {
-  const numberedOptions = choices
-    .map((choice, index) => `${index + 1}: ${choice}`)
-    .join(", ");
+function playRound(computerChoice, playerChoice, winningCombos, scores) {
+  const pickedItemsHtml = [computerChoice, playerChoice]
+    .map((choice, index) => {
+      return `
+          <div class='picked-item-container'>
+            <p>${index === 0 ? "The House " : "You "} Picked</p>
+            <button class="btn-choice btn-${choice}" disabled>${choice}</button>
+          </div>
+        `;
+    })
+    .join("");
 
-  // Get index of user's pick
-  const userIndex = parseInt(prompt(`Please Choose: ${numberedOptions}`)) - 1;
+  const roundResultEl = document.createElement("p");
+  roundResultEl.setAttribute("class", "round-message");
 
-  // Verify input
-  if (userIndex < 0 || userIndex >= choices.length || isNaN(userIndex)) {
-    console.warn("Please enter a valid integer from 1 to 3");
-    return getHumanChoice(choices);
-  }
-
-  return choices[userIndex];
-}
-
-function playRound(computerChoice, humanChoice, scores) {
-  console.log(`Computer chose: ${computerChoice}\nYou chose: ${humanChoice}`);
-
-  if (winningCombos.includes(computerChoice + ", " + humanChoice)) {
-    console.log("Computer wins!");
+  if (winningCombos.includes(computerChoice + ", " + playerChoice)) {
+    roundResultEl.textContent = "You Lose!";
     scores.computer += 1;
-  } else if (computerChoice === humanChoice) {
-    console.log("That's a tie!");
+  } else if (computerChoice === playerChoice) {
+    roundResultEl.textContent = "That's a tie!";
   } else {
-    console.log("You win!");
-    scores.human += 1;
+    roundResultEl.textContent = "You Win!";
+    scores.player += 1;
   }
 
-  console.log(`Computer: ${scores.computer}\nYou: ${scores.human}`);
+  playAreaEl.innerHTML = `<div class='result-container'>${pickedItemsHtml}</div>`;
+  playAreaEl.appendChild(roundResultEl);
+
+  const nextRoundEl = document.createElement("button");
+  nextRoundEl.setAttribute("class", "btn-next-round");
+  nextRoundEl.textContent = "Next Round";
+
+  playAreaEl.appendChild(nextRoundEl);
+
+  updateScoreboard(scores);
 }
 
 function playGame() {
+  // Define the choices
+  const choices = ["rock", "paper", "scissors"];
+  const winningCombos = ["rock, scissors", "paper, rock", "scissors, paper"];
+
   const scores = {
-    human: 0,
+    player: 0,
     computer: 0,
   };
 
-  for (let i = 0; i < 5; i++) {
-    console.log("==== Round " + (i + 1) + " ====");
-    playRound(getComputerChoice(choices), getHumanChoice(choices), scores);
-  }
+  displayChoices(choices);
 
-  if (scores.computer > scores.human) {
-    console.log("Computer won the game");
-  } else if (scores.computer < scores.human) {
-    console.log("Hayyy! You won the game!");
-  } else {
-    console.log("Oh oh! It's a tie :|");
-  }
+  playAreaEl.addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn-choice")) {
+      let playerChoice = e.target.dataset.choice;
+      playRound(
+        getComputerChoice(choices),
+        playerChoice,
+        winningCombos,
+        scores
+      );
+    }
+
+    if (e.target.classList.contains("btn-next-round")) {
+      displayChoices(choices);
+    }
+
+    if (scores.computer === 5 || scores.player === 5) {
+      playAreaEl.innerHTML = `<div class='result-container'></div>`;
+      playAreaEl.querySelector(".result-container").textContent =
+        scores.computer === 5 ? "Gameover :(" : "You beat the house!";
+
+      const playAgainEl = document.createElement("button");
+      playAgainEl.setAttribute("class", "btn-play-again");
+      playAgainEl.textContent = "Play Again";
+
+      playAreaEl.appendChild(playAgainEl);
+    }
+
+    if (e.target.classList.contains("btn-play-again")) {
+      scores.player = 0;
+      scores.computer = 0;
+      updateScoreboard(scores);
+      displayChoices(choices);
+    }
+  });
 }
 
 playGame();
