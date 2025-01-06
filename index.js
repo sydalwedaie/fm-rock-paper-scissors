@@ -5,7 +5,9 @@ const playAreaEl = document.querySelector(".play-area");
 
 // Desplay UI Functions
 function displayChoices(choices) {
+  // Reset the playing area at the begining of each round or game
   playAreaEl.innerHTML = "";
+
   const choiceHtml = choices
     .map(
       (choice) =>
@@ -74,9 +76,11 @@ function playGame() {
     computer: 0,
   };
 
+  // Load the initial state of the game
   displayChoices(choices);
 
   playAreaEl.addEventListener("click", (e) => {
+    // Player picks an item which triggers a round
     if (e.target.classList.contains("btn-choice")) {
       let playerChoice = e.target.dataset.choice;
       playRound(
@@ -87,10 +91,12 @@ function playGame() {
       );
     }
 
+    // Restart the round
     if (e.target.classList.contains("btn-next-round")) {
       displayChoices(choices);
     }
 
+    // Determin round winner, display results
     if (scores.computer === 5 || scores.player === 5) {
       playAreaEl.innerHTML = `<div class='result-container'></div>`;
       playAreaEl.querySelector(".result-container").textContent =
@@ -103,6 +109,7 @@ function playGame() {
       playAreaEl.appendChild(playAgainEl);
     }
 
+    // Restart the game
     if (e.target.classList.contains("btn-play-again")) {
       scores.player = 0;
       scores.computer = 0;
