@@ -2,74 +2,20 @@
 const playerScoreEl = document.querySelector(".player-score");
 const computerScoreEl = document.querySelector(".computer-score");
 const playAreaEl = document.querySelector(".play-area");
-
-// Desplay UI Functions
-function displayChoices(choices) {
-  // Reset the playing area at the begining of each round or game
-  playAreaEl.innerHTML = "";
-
-  const choiceHtml = choices
-    .map(
-      (choice) =>
-        `<button class="btn-choice btn-${choice}" data-choice="${choice}">${choice}</button>`
-    )
-    .join("");
-  playAreaEl.innerHTML =
-    "<div class='choice-container'>" + choiceHtml + "</div>";
-}
-
-function updateScoreboard(scores) {
-  playerScoreEl.querySelector("span").textContent = scores.player;
-  computerScoreEl.querySelector("span").textContent = scores.computer;
-}
-
-// Game Logic
-function getComputerChoice(choices) {
-  const randomIndex = Math.floor(Math.random() * choices.length);
-  return choices[randomIndex];
-}
-
-function playRound(computerChoice, playerChoice, winningCombos, scores) {
-  const pickedItemsHtml = [computerChoice, playerChoice]
-    .map((choice, index) => {
-      return `
-          <div class='picked-item-container'>
-            <p>${index === 0 ? "The House " : "You "} Picked</p>
-            <button class="btn-choice btn-${choice}" disabled>${choice}</button>
-          </div>
-        `;
-    })
-    .join("");
-
-  const roundResultEl = document.createElement("p");
-  roundResultEl.setAttribute("class", "round-message");
-
-  if (winningCombos.includes(computerChoice + ", " + playerChoice)) {
-    roundResultEl.textContent = "You Lose!";
-    scores.computer += 1;
-  } else if (computerChoice === playerChoice) {
-    roundResultEl.textContent = "That's a tie!";
-  } else {
-    roundResultEl.textContent = "You Win!";
-    scores.player += 1;
-  }
-
-  playAreaEl.innerHTML = `<div class='result-container'>${pickedItemsHtml}</div>`;
-  playAreaEl.appendChild(roundResultEl);
-
-  const nextRoundEl = document.createElement("button");
-  nextRoundEl.setAttribute("class", "btn-next-round");
-  nextRoundEl.textContent = "Next Round";
-
-  playAreaEl.appendChild(nextRoundEl);
-
-  updateScoreboard(scores);
-}
+const choicesContainerEl = document.querySelector(".choices-container");
+const pickedItemsContainerEl = document.querySelector(
+  ".picked-items-container"
+);
+const resultContainerEl = document.querySelector(".result-container");
 
 function playGame() {
   // Define the choices
   const choices = ["rock", "paper", "scissors"];
-  const winningCombos = ["rock, scissors", "paper, rock", "scissors, paper"];
+  const winningCombos = [
+    choices[0] + choices[2],
+    choices[1] + choices[0],
+    choices[2] + choices[1],
+  ];
 
   const scores = {
     player: 0,
@@ -96,17 +42,9 @@ function playGame() {
       displayChoices(choices);
     }
 
-    // Determin round winner, display results
+    // Determin game winner, display results
     if (scores.computer === 5 || scores.player === 5) {
-      playAreaEl.innerHTML = `<div class='result-container'></div>`;
-      playAreaEl.querySelector(".result-container").textContent =
-        scores.computer === 5 ? "Gameover :(" : "You beat the house!";
-
-      const playAgainEl = document.createElement("button");
-      playAgainEl.setAttribute("class", "btn-play-again");
-      playAgainEl.textContent = "Play Again";
-
-      playAreaEl.appendChild(playAgainEl);
+      displayGameOver(scores);
     }
 
     // Restart the game
@@ -119,4 +57,119 @@ function playGame() {
   });
 }
 
+// ---------------------
+// Game Logic
+// ---------------------
+function getComputerChoice(choices) {
+  const randomIndex = Math.floor(Math.random() * choices.length);
+  return choices[randomIndex];
+}
+
+function playRound(computerChoice, playerChoice, winningCombos, scores) {
+  displayPickedItems(computerChoice, playerChoice);
+
+  const isComputerWinner = winningCombos.includes(
+    computerChoice + playerChoice
+  );
+  const isTie = computerChoice === playerChoice;
+  let roundWinner = "";
+
+  if (isComputerWinner) {
+    scores.computer += 1;
+    roundWinner = "computer";
+  } else if (isTie) {
+    roundWinner = "tie";
+  } else {
+    scores.player += 1;
+    roundWinner = "player";
+  }
+
+  displayRoundResult(roundWinner);
+  displayAgainBtn("Next Round");
+  updateScoreboard(scores);
+}
+
+// ---------------------
+// Desplay UI Functions
+// ---------------------
+function displayChoices(choices) {
+  // Reset the playing area at the begining of each round or game
+  pickedItemsContainerEl.innerHTML = "";
+  resultContainerEl.innerHTML = "";
+
+  const choicesHtml = choices
+    .map(
+      (choice) =>
+        `<button class="btn-choice btn-${choice}" data-choice="${choice}">${choice}</button>`
+    )
+    .join("");
+
+  choicesContainerEl.innerHTML = choicesHtml;
+}
+
+function displayPickedItems(computerChoice, playerChoice) {
+  const pickedItemsHtml = [computerChoice, playerChoice]
+    .map((choice, index) => {
+      return `
+        <div class='picked-item-container'>
+          <p>${index === 0 ? "The House " : "You "} Picked</p>
+          <button class="btn-choice btn-${choice}" disabled>${choice}</button>
+        </div>
+      `;
+    })
+    .join("");
+
+  choicesContainerEl.innerHTML = "";
+  pickedItemsContainerEl.innerHTML = pickedItemsHtml;
+}
+
+function displayRoundResult(roundWinner) {
+  const roundMessage = document.createElement("p");
+  roundMessage.setAttribute("class", "round-message");
+
+  if (roundWinner === "computer") {
+    roundMessage.textContent = "You Lose!";
+  } else if (roundWinner === "tie") {
+    roundMessage.textContent = "That's a tie!";
+  } else {
+    roundMessage.textContent = "You Win!";
+  }
+
+  resultContainerEl.appendChild(roundMessage);
+}
+
+function displayGameOver(scores) {
+  choicesContainerEl.innerHTML = "";
+  pickedItemsContainerEl.innerHTML = "";
+  resultContainerEl.innerHTML = "";
+
+  const roundMessage = document.createElement("p");
+  roundMessage.setAttribute("class", "round-message");
+
+  roundMessage.textContent =
+    scores.computer === 5 ? "Gameover :(" : "You beat the house!";
+
+  resultContainerEl.appendChild(roundMessage);
+
+  displayAgainBtn("Play Again");
+}
+
+function displayAgainBtn(buttonText) {
+  const nextRoundEl = document.createElement("button");
+  nextRoundEl.setAttribute(
+    "class",
+    `btn-${buttonText.split(" ").join("-").toLowerCase()}`
+  );
+  nextRoundEl.textContent = buttonText;
+  resultContainerEl.appendChild(nextRoundEl);
+}
+
+function updateScoreboard(scores) {
+  playerScoreEl.querySelector("span").textContent = scores.player;
+  computerScoreEl.querySelector("span").textContent = scores.computer;
+}
+
+// ---------------------
+// Run Game
+// ---------------------
 playGame();
