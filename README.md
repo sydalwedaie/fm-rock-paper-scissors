@@ -1,4 +1,4 @@
-![](./screenshot.jpdg)
+![](./screenshot.jpeg)
 
 # Frontend Mentor - Rock, Paper, Scissors solution
 
@@ -17,8 +17,8 @@ Users should be able to:
 
 ### Links
 
-- Solution on: [GitHub](https://your-solution-url.com)
-- Live Site on: [Netlify](https://your-live-site-url.com)
+- Solution on: [GitHub](https://github.com/sydalwedaie/fm-rock-paper-scissors)
+- Live Site on: [Netlify](https://fm-rock-paper-scissors-wgvgh.netlify.app)
 
 ## What I learned
 
