@@ -1,4 +1,265 @@
+/* Resets */
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html,
+body,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Variables */
+:root {
+  --scissors-border: hsl(39, 89%, 49%);
+  --paper-border: hsl(230, 89%, 62%);
+  --rock-border: hsl(349, 71%, 52%);
+  --lizard-border: hsl(261, 73%, 60%);
+  --spock-border: hsl(189, 59%, 53%);
+
+  --background-gradient: radial-gradient(
+    circle at center,
+    hsl(214, 47%, 23%),
+    hsl(237, 49%, 15%)
+  );
+
+  --dark-text: hsl(229, 25%, 31%);
+  --score-text: hsl(229, 64%, 46%);
+  --header-outline: hsl(217, 16%, 45%);
+}
+
+/* Fonts */
+@font-face {
+  font-family: "BarlowSemiCondensed";
+  src: local("BarlowSemiCondensed"),
+    url("/fonts/BarlowSemiCondensed-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "BarlowSemiCondensed";
+  src: local("BarlowSemiCondensed"),
+    url("/fonts/BarlowSemiCondensed-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+/* Buttons */
+.btn {
+  font-family: "BarlowSemiCondensed", sans-serif;
+  border: 1px solid white;
+  border-radius: 0.25rem;
+  padding: 1rem 3rem;
+  letter-spacing: 0.156rem;
+  font-size: 1rem;
+  color: var(--dark-text);
+}
+
+.btn-rules {
+  background: none;
+  padding: 0.75rem 2rem;
+  color: white;
+}
+
+/* General */
+body {
+  font-family: "BarlowSemiCondensed", sans-serif;
+  color: white;
+  min-height: 100vh;
+  background-image: var(--background-gradient);
+  /* background-color: lightblue; */
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 45rem;
+  min-width: 23rem;
+  margin: 0 auto;
+  @media screen and (min-width: 37rem) {
+    padding: 2rem;
+  }
+}
+
+/* Scoreboard */
+.logo {
+  img {
+    max-width: 100%;
+  }
+}
+
+.scoreboard {
+  border: 2px solid var(--header-outline);
+  border-radius: 0.25rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.score-container {
+  background-color: white;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  width: 6rem;
+  p:first-child {
+    color: var(--score-text);
+    font-size: 0.85rem;
+  }
+}
+
+.computer-score {
+  /* Force the logo in between the score blocks */
+  order: -1;
+}
+
+.score-counter {
+  color: var(--dark-text);
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+/* Play Area */
+.play-area {
+  color: white;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+/* Choices Container */
+.choices-container {
+  background: no-repeat center url("/images/bg-triangle.svg");
+  background-size: 11rem;
+  text-align: center;
+  max-width: 20rem;
+
+  .btn-rock {
+    transform: translate(-15%, -10%);
+  }
+
+  .btn-paper {
+    transform: translate(15%, -10%);
+  }
+  @media screen and (min-width: 37rem) {
+    background-size: 15rem;
+    max-width: 23rem;
+  }
+}
+
+.btn-choice {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background-color: #f3f3f3;
+  border-width: 1rem;
+  border-style: solid;
+  /* opacity: 0.1; */
+  &.btn-rock {
+    border-color: var(--rock-border);
+  }
+  &.btn-paper {
+    border-color: var(--paper-border);
+  }
+  &.btn-scissors {
+    border-color: var(--scissors-border);
+  }
+
+  @media screen and (min-width: 37rem) {
+    width: 9rem;
+    height: 9rem;
+    border-width: 1.1rem;
+  }
+}
+
+.picked-items-container {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.picked-item-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.result-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  button {
+    max-width: 18rem;
+  }
+}
+
+.round-message {
+  font-size: 3.5rem;
+  font-weight: bold;
+}
+
+/* Footer */
 footer {
-  position: absolute;
-  bottom: 5px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+::backdrop {
+  background-color: white;
+}
+
+.rules-container {
+  dialog {
+    border: none;
+    height: 100%;
+  }
+
+  dialog div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+  }
+
+  h1 {
+    color: var(--dark-text);
+  }
+
+  .image-rules {
+    width: 100%;
+  }
+
+  .btn-close {
+    border: none;
+    background: none;
+  }
+}
+
+.attribution {
+  text-align: center;
+  font-size: 12px;
+  color: white;
+  a,
+  a:visited {
+    color: var(--scissors-border);
+    font-weight: bold;
+    text-decoration: none;
+  }
 }

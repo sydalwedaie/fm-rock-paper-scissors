@@ -25,3 +25,5 @@ Users should be able to:
 - `e.target.dataset.choice`
 - `classList.contains`
 - Once JS adds a piece of DOM, that peace can't be removed by a simple `if` statement! You should explicitely remove it.
+- Using `dialog` for modals.
+- The `closest()` method to divert click events to the target you want.

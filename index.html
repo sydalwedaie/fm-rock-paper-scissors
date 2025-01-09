@@ -20,19 +20,43 @@
       <div class="logo">
         <img src="/images/logo.svg" alt="game logo" />
       </div>
-      <p class="computer-score">House Score <span>0</span></p>
-      <p class="player-score">Player Score <span>0</span></p>
+      <div class="score-container computer-score">
+        <p>HOUSE<br />SCORE</p>
+        <p class="score-counter computer-score-counter">0</p>
+      </div>
+      <div class="score-container player-score">
+        <p>PLAYER<br />SCORE</p>
+        <p class="score-counter player-score-counter">0</p>
+      </div>
     </header>
     <main class="play-area">
       <div class="choices-container"></div>
       <div class="picked-items-container"></div>
       <div class="result-container"></div>
     </main>
-    <footer class="attribution">
-      Challenge by
-      <a href="https://www.frontendmentor.io?ref=challenge" target="_blank"
-        >Frontend Mentor</a
-      >. Coded by <a href="#">Sayed Ali</a>.
+    <footer>
+      <div class="rules-container">
+        <dialog>
+          <div>
+            <h1>RULES</h1>
+            <img
+              src="/images/image-rules.svg"
+              alt="rules"
+              class="image-rules"
+            />
+            <button autofocus class="btn-close">
+              <img src="/images/icon-close.svg" alt="close" />
+            </button>
+          </div>
+        </dialog>
+        <button class="btn btn-rules">RULES</button>
+      </div>
+      <div class="div attribution">
+        Challenge by
+        <a href="https://www.frontendmentor.io?ref=challenge" target="_blank"
+          >Frontend Mentor</a
+        >. Coded by <a href="https://github.com/sydalwedaie">Sayed Ali</a>.
+      </div>
     </footer>
     <script src="/index.js"></script>
   </body>

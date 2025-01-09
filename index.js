@@ -1,6 +1,6 @@
 // Get Static UI Elements
-const playerScoreEl = document.querySelector(".player-score");
-const computerScoreEl = document.querySelector(".computer-score");
+const playerScoreEl = document.querySelector(".player-score-counter");
+const computerScoreEl = document.querySelector(".computer-score-counter");
 const playAreaEl = document.querySelector(".play-area");
 const choicesContainerEl = document.querySelector(".choices-container");
 const pickedItemsContainerEl = document.querySelector(
@@ -27,8 +27,9 @@ function playGame() {
 
   playAreaEl.addEventListener("click", (e) => {
     // Player picks an item which triggers a round
-    if (e.target.classList.contains("btn-choice")) {
-      let playerChoice = e.target.dataset.choice;
+    const buttonEl = e.target.closest(".btn-choice");
+    if (buttonEl) {
+      let playerChoice = buttonEl.dataset.choice;
       playRound(
         getComputerChoice(choices),
         playerChoice,
@@ -85,7 +86,7 @@ function playRound(computerChoice, playerChoice, winningCombos, scores) {
   }
 
   displayRoundResult(roundWinner);
-  displayAgainBtn("Next Round");
+  displayAgainBtn("NEXT ROUND");
   updateScoreboard(scores);
 }
 
@@ -96,24 +97,24 @@ function displayChoices(choices) {
   // Reset the playing area at the begining of each round or game
   pickedItemsContainerEl.innerHTML = "";
   resultContainerEl.innerHTML = "";
+  pickedItemsContainerEl.style.display = "none";
+  resultContainerEl.style.display = "none";
 
   const choicesHtml = choices
-    .map(
-      (choice) =>
-        `<button class="btn-choice btn-${choice}" data-choice="${choice}">${choice}</button>`
-    )
+    .map((choice) => displayChoiceBtn(choice, false))
     .join("");
 
   choicesContainerEl.innerHTML = choicesHtml;
 }
 
 function displayPickedItems(computerChoice, playerChoice) {
+  pickedItemsContainerEl.style.display = "flex";
   const pickedItemsHtml = [computerChoice, playerChoice]
     .map((choice, index) => {
       return `
         <div class='picked-item-container'>
-          <p>${index === 0 ? "The House " : "You "} Picked</p>
-          <button class="btn-choice btn-${choice}" disabled>${choice}</button>
+          ${displayChoiceBtn(choice, true)}
+          <p>${index === 0 ? "HOUSE " : "YOU "} PICKED</p>
         </div>
       `;
     })
@@ -124,50 +125,76 @@ function displayPickedItems(computerChoice, playerChoice) {
 }
 
 function displayRoundResult(roundWinner) {
+  resultContainerEl.style.display = "flex";
   const roundMessage = document.createElement("p");
   roundMessage.setAttribute("class", "round-message");
 
   if (roundWinner === "computer") {
-    roundMessage.textContent = "You Lose!";
+    roundMessage.textContent = "YOU LOSE!";
   } else if (roundWinner === "tie") {
-    roundMessage.textContent = "That's a tie!";
+    roundMessage.textContent = "THAT'S A TIE!";
   } else {
-    roundMessage.textContent = "You Win!";
+    roundMessage.textContent = "YOU WIN!";
   }
 
   resultContainerEl.appendChild(roundMessage);
 }
 
 function displayGameOver(scores) {
-  choicesContainerEl.innerHTML = "";
-  pickedItemsContainerEl.innerHTML = "";
   resultContainerEl.innerHTML = "";
 
   const roundMessage = document.createElement("p");
   roundMessage.setAttribute("class", "round-message");
 
   roundMessage.textContent =
-    scores.computer === 5 ? "Gameover :(" : "You beat the house!";
+    scores.computer === 5 ? "GAMEOVER 😢" : "YOU BEAT THE HOUSE 🥳";
 
   resultContainerEl.appendChild(roundMessage);
 
-  displayAgainBtn("Play Again");
+  displayAgainBtn("PLAY AGAIN");
+}
+
+function displayChoiceBtn(choice, isDisabled) {
+  return `
+    <button 
+      class="btn-choice btn-${choice}" 
+      data-choice="${choice}" 
+      ${isDisabled ? "disabled" : ""}
+    >
+      <img src="/images/icon-${choice}.svg" alt="icon-${choice}" />
+    </button>
+  `;
 }
 
 function displayAgainBtn(buttonText) {
   const nextRoundEl = document.createElement("button");
   nextRoundEl.setAttribute(
     "class",
-    `btn-${buttonText.split(" ").join("-").toLowerCase()}`
+    `btn btn-${buttonText.split(" ").join("-").toLowerCase()}`
   );
   nextRoundEl.textContent = buttonText;
   resultContainerEl.appendChild(nextRoundEl);
 }
 
 function updateScoreboard(scores) {
-  playerScoreEl.querySelector("span").textContent = scores.player;
-  computerScoreEl.querySelector("span").textContent = scores.computer;
+  playerScoreEl.textContent = scores.player;
+  computerScoreEl.textContent = scores.computer;
 }
+
+// ---------------------
+// Rules Dialog
+// ---------------------
+const dialog = document.querySelector("dialog");
+const showButton = document.querySelector("dialog + button");
+const closeButton = document.querySelector("dialog button");
+
+showButton.addEventListener("click", () => {
+  dialog.showModal();
+});
+
+closeButton.addEventListener("click", () => {
+  dialog.close();
+});
 
 // ---------------------
 // Run Game
